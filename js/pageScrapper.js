@@ -48,8 +48,7 @@ const scraperObject = {
 
         let currentPageData = await pagePromise(URL)
         const corners = await formatinData(currentPageData)
-        await downloadImages(corners)
-
+        const download = await downloadImages(corners)
     }
 }
 
