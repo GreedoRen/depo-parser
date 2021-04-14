@@ -5,8 +5,9 @@ const URL = 'https://depomoscow.ru/corners'
 
 const scraperObject = {
     url: URL,
-    async scraper(browser){
-        let page = await browser.newPage()        
+    async scraper(browser) {
+        let page = await browser.newPage()
+        await page.setDefaultNavigationTimeout(0)
         await page.goto(this.url)
 
         console.log(`Navigating to ${this.url}...`)
@@ -18,11 +19,11 @@ const scraperObject = {
             return links
         })
 
-        let pagePromise = (link) => new Promise(async(resolve, reject) => {
+        let pagePromise = (link) => new Promise(async (resolve, reject) => {
             let arrayObj = []
             let infoArray = []
             let dataObj = {}
-            
+
             let newPage = await browser.newPage()
             await newPage.goto(URL)
 
@@ -36,7 +37,7 @@ const scraperObject = {
             [...info].forEach((item, index, arr) => {
                 !(index % 3) ? infoArray.push(arr.slice(index, index + 3)) : ''
             })
-            
+
             dataObj['info'] = infoArray
             dataObj['links'] = urls
 
@@ -53,7 +54,7 @@ const scraperObject = {
 }
 
 formatinData = (data) => {
-    const {cornerName, ambassadorImg, info, links} = data
+    const { cornerName, ambassadorImg, info, links } = data
     let corners = []
 
     for (let index = 0; index < cornerName.length; index++) {
@@ -73,17 +74,17 @@ formatinData = (data) => {
 }
 
 downloadImages = async (corners) => {
-    const download = function(uri, filename, callback){
-        request.head(uri, function(err, res, body){    
-          request(uri).pipe(fs.createWriteStream(filename)).on('close', callback)
+    const download = function (uri, filename, callback) {
+        request.head(uri, function (err, res, body) {
+            request(uri).pipe(fs.createWriteStream(filename)).on('close', callback)
         })
-      }
+    }
 
     for (let index = 0; index < corners.length; index++) {
         const element = corners[index]
         const url = element.ambassadorImg
 
-        await download(url, `img/${element.cornerName}.jpg`, () => {console.log(`download ${element.cornerName}.jpg`)})
+        await download(url, `${element.cornerName}.jpg`, () => { console.log(`download ${element.cornerName}.jpg`) })
     }
 }
 
