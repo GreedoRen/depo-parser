@@ -1,4 +1,4 @@
 # depo-parser
 
-npm i
-node ./index.js
+# npm i
+# node ./js/index.js
